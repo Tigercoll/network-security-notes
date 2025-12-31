@@ -1,0 +1,9 @@
+# --- Practice artifacts / exports ---
+# Day009: exported certificates from PowerShell
+*.cer
+
+# --- OS / Editor ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
