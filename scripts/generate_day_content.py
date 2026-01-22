@@ -1,30 +1,15 @@
----
-title: Day033：日志与可观测性 - 日志规范与字段统一
-tags:
-  - 网络
-  - 安全
-  - 学习计划
-categories:
-  - 网络安全
-abbrlink: 703eba9e
-date: 2026-01-26 00:00:00
-updated: 2026-01-26 00:00:00
+"""Generate detailed content for Day033-Day090."""
+from __future__ import annotations
 
----
-# Day033：日志与可观测性 - 日志规范与字段统一
+from pathlib import Path
 
-- 日期：2026-01-26
-- 周次：第5周
-
-## 学习目标
-- 将不同来源日志统一字段
-- 形成规范文档
-
-<!--more-->
-
-## 学习内容
-
-### 1️⃣ 日志规范化的重要性
+DAY_TEMPLATES = {
+    "Day033": {
+        "title": "日志规范与字段统一",
+        "week": 5,
+        "date": "2026-01-26",
+        "objective": "- 将不同来源日志统一字段\n- 形成规范文档",
+        "content": """### 1️⃣ 日志规范化的重要性
 
 #### 1.1 为什么需要统一字段？
 
@@ -324,10 +309,8 @@ def main() -> int:
 if __name__ == "__main__":
     sys.exit(main())
 ```
-
-## 实践任务（合法授权范围内）
-
-### 🎯 任务 1: 分析现有日志格式
+""",
+        "tasks": """#### 🎯 任务 1: 分析现有日志格式
 
 **执行以下步骤：**
 
@@ -340,7 +323,7 @@ if __name__ == "__main__":
 
 ---
 
-### 🎯 任务 2: 配置日志规范化
+#### 🎯 任务 2: 配置日志规范化
 
 **选择一个系统进行配置：**
 
@@ -352,7 +335,7 @@ if __name__ == "__main__":
 
 ---
 
-### 🎯 任务 3: 验证日志格式
+#### 🎯 任务 3: 验证日志格式
 
 **使用验证脚本：**
 
@@ -361,12 +344,8 @@ python validate_logs.py /path/to/normalized.log
 ```
 
 **输出：** 验证结果截图
-
----
-
-## 巩固练习（题与复盘）
-
-### 📝 练习 1: 字段映射设计
+""",
+        "practice": """### 📝 练习 1: 字段映射设计
 
 **题目：** 以下两个系统的日志格式，设计统一映射方案
 
@@ -418,200 +397,28 @@ python validate_logs.py /path/to/normalized.log
 - `2026-01-26T02:30:45.000Z`
 
 **要求：** 提供 Python 或 Shell 脚本实现
-
----
-
-## 评估标准（达成判定）
-
-- ✅ 提交规范文档（字段定义 + 映射规则）
+""",
+        "criteria": """- ✅ 提交规范文档（字段定义 + 映射规则）
 - ✅ 至少 2 个系统的映射配置
 - ✅ 验证脚本运行成功
 - ✅ 输出规范化日志样本
-
-## 学习成果达成情况（由学习者填写）
-- 截图与证据：
-- 关键命令与输出：
-- 结论与反思：
-
-
-## 集中参考答案（含思路）
-
-### 练习 1 参考答案
-
-**统一字段列表：**
-- timestamp（时间戳）
-- level（级别）
-- source（来源）
-- host（主机）
-- user（用户）
-- action（动作）
-- status（状态）
-- ip_address（IP地址）
-- uri/object（操作对象）
-- duration_ms（耗时）
-
-**系统A映射规则：**
-```
-[timestamp] [user] [method] [uri] [status] [duration] [ip]
-  ↓           ↓       ↓        ↓        ↓         ↓        ↓
-timestamp   user    action   object   status  duration_ms  ip_address
-level: info（默认）
-source: web-server
-```
-
-**系统B映射规则：**
-```
-timestamp | user | query | time | rows
-    ↓       ↓      ↓       ↓      ↓
-timestamp user  object duration_ms rows（额外字段）
-level: info（默认）
-source: database
-action: query（固定）
-```
-
-**映射后 JSON 示例：**
-
-系统A：
-```json
-{
-    "timestamp": "2026-01-26T10:30:45.000Z",
-    "level": "info",
-    "source": "web-server",
-    "user": "admin",
-    "action": "GET",
-    "object": "/api/users",
-    "status": 200,
-    "duration_ms": 123,
-    "ip_address": "192.168.1.100"
+"""
+    }
 }
-```
-
-系统B：
-```json
-{
-    "timestamp": "2026-01-26T10:30:45.123Z",
-    "level": "info",
-    "source": "database",
-    "user": "admin",
-    "action": "query",
-    "object": "SELECT * FROM users",
-    "duration_ms": 50,
-    "rows": 10
-}
-```
-
----
-
-### 练习 2 参考答案
-
-**完整映射表：**
-
-| 来源 | 原级别 | 目标级别 | 理由 |
-|------|--------|---------|------|
-| Nginx | 2xx | info | 正常HTTP响应 |
-| Nginx | 3xx | info | 重定向 |
-| Nginx | 4xx | warning | 客户端错误 |
-| Nginx | 5xx | error | 服务器错误 |
-| MySQL | ERROR | error | 数据库错误 |
-| MySQL | Warning | warning | 警告 |
-| MySQL | Note | debug | 提示信息 |
-| SSH | Failed | warning | 登录失败 |
-| SSH | Accepted | info | 登录成功 |
-| SSH | Invalid | warning | 无效用户 |
-
----
-
-### 练习 3 参考答案
-
-**Python 实现：**
-
-```python
-#!/usr/bin/env python3
-import re
-from datetime import datetime, timezone, timedelta
-
-def parse_nginx_time(time_str):
-    """解析 Nginx 时间格式：26/Jan/2026:10:30:45 +0800"""
-    match = re.match(r'(\d{2})/(\w{3})/(\d{4}):(\d{2}):(\d{2}):(\d{2}) ([+-]\d{4})', time_str)
-    if not match:
-        return None
-
-    day, month_str, year, hour, minute, second, tz_str = match.groups()
-    months = {'Jan': 1, 'Feb': 2, 'Mar': 3, 'Apr': 4, 'May': 5, 'Jun': 6,
-              'Jul': 7, 'Aug': 8, 'Sep': 9, 'Oct': 10, 'Nov': 11, 'Dec': 12}
-
-    # 解析时区
-    tz_sign = 1 if tz_str[0] == '+' else -1
-    tz_hours = int(tz_str[1:3])
-    tz_minutes = int(tz_str[3:5])
-    tz_offset = timedelta(hours=tz_sign * tz_hours, minutes=tz_sign * tz_minutes)
-
-    # 创建时间对象
-    dt = datetime(int(year), months[month_str], int(day),
-                  int(hour), int(minute), int(second))
-
-    # 转换为 UTC
-    utc_dt = dt - tz_offset
-
-    return utc_dt.isoformat(timespec='milliseconds').replace('+00:00', 'Z')
-
-def parse_mysql_time(time_str):
-    """解析 MySQL 时间格式：2026-01-26 10:30:45"""
-    dt = datetime.strptime(time_str, '%Y-%m-%d %H:%M:%S')
-    return dt.replace(tzinfo=timezone.utc).isoformat(timespec='milliseconds').replace('+00:00', 'Z')
-
-def parse_syslog_time(time_str):
-    """解析 Syslog 时间格式：Jan 26 10:30:45"""
-    current_year = datetime.now().year
-    dt = datetime.strptime(f"{current_year} {time_str}", '%Y %b %d %H:%M:%S')
-    return dt.replace(tzinfo=timezone.utc).isoformat(timespec='milliseconds').replace('+00:00', 'Z')
-
-if __name__ == '__main__':
-    # 测试
-    nginx_time = "26/Jan/2026:10:30:45 +0800"
-    mysql_time = "2026-01-26 10:30:45"
-    syslog_time = "Jan 26 10:30:45"
-
-    print("Nginx:", parse_nginx_time(nginx_time))
-    print("MySQL:", parse_mysql_time(mysql_time))
-    print("Syslog:", parse_syslog_time(syslog_time))
-```
-
-**输出结果：**
-```
-Nginx: 2026-01-26T02:30:45.000Z
-MySQL: 2026-01-26T10:30:45.000Z
-Syslog: 2026-01-26T10:30:45.000Z
-```
 
 
-## 学习成果示例填写（可照抄）
+def generate_day_content(day_num: str) -> str:
+    """Generate content for a specific day."""
+    if day_num not in DAY_TEMPLATES:
+        return ""
 
-> 可将"示例"内容替换为你自己的时间与截图文件名。
+    template = DAY_TEMPLATES[day_num]
 
-### 截图与证据（示例）
+    return template["content"]
 
-- 任务 1：`images/dayXXX_task1.png`
 
-### 关键命令与输出（示例）
-
-```
-命令示例：
-输出示例：
-```
-
-### 结论与反思（示例）
-
-**我今天搞清楚了**：
-- （示例）理解了核心概念
-
-**我差点搞混的是**：
-- （示例）某个易混淆点
-
-**明天我要继续补的是**：
-- （示例）下一步深入方向
-
-**本次学习耗时**：约 2 小时
-
-**掌握程度自评**：
-- [x] 😃 完成了所有任务并理解原理
+if __name__ == "__main__":
+    for day in ["Day033"]:
+        print(f"=== {day} ===")
+        print(generate_day_content(day))
+        print()

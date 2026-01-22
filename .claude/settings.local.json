@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(wc -l daily/Day*.md)"
+      "Bash(wc -l daily/Day*.md)",
+      "Bash(tree:*)"
     ]
   }
 }

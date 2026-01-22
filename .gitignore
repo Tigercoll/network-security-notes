@@ -30,3 +30,7 @@ Desktop.ini# --- Practice artifacts / exports ---
 Thumbs.db
 Desktop.ini
 .vscode/
+
+# --- Claude Temp Files ---
+tmpclaude-*
+.claude/settings.local.json
