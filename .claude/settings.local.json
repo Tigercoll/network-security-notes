@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(wc -l daily/Day*.md)",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(ls:*)",
+      "Bash(git push:*)"
     ]
   }
 }
